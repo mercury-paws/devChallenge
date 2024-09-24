@@ -1,0 +1,44 @@
+body {
+  display: grid;
+
+  grid-template-areas:
+    "h h"
+    "m m"
+    "f f";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.02em;
+}
+header {
+  grid-area: h;
+  text-align: center;
+}
+
+main {
+  grid-area: m;
+  display: grid;
+  gap: 20px;
+}
+
+footer {
+  grid-area: f;
+}
+
+@media screen and (min-width: 768px) {
+  header {
+    text-align: center;
+  }
+
+  main {
+    grid-area: m;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 2fr 1fr;
+  }
+
+  footer {
+    grid-area: f;
+  }
+}

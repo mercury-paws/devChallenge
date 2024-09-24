@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./index.css" />
+  </head>
+  <body class="darkBody">
+    <header>
+      <h2>Ministry of Foreign Affairs of Ukraine</h2>
+      <h1>The tool for data visualisation</h1>
+      <button class="modeButton">Switch to light mode</button>
+    </header>
+    <main>
+      <section>
+        <p>Here will be graph</p>
+      </section>
+      <section>
+        <div class="loading">
+          <p>data loading</p>
+          <input type="file" />
+          <input type="textarea" />
+        </div>
+        <div class="typeOfGraph">
+          <form>
+            <input
+              type="radio"
+              id="lineGraph"
+              name="typeOfGraph"
+              value="lineGraph"
+            />
+            <label for="lineGraph"> Line Graph</label><br />
+            <input
+              type="radio"
+              id="barChart"
+              name="typeOfGraph"
+              value="barChart"
+            />
+            <label for="barChart"> Bar Chart</label><br />
+            <input
+              type="radio"
+              id="pieChart"
+              name="typeOfGraph"
+              value="pieChart"
+            />
+            <label for="pieChart"> Pie Chart</label>
+          </form>
+          <button type="button">Make a graph</button>
+        </div>
+        <div>
+          <p>Export</p>
+          <div class="exportButtons">
+            <button>Download</button>
+            <button>Print</button>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer><p>footer here will be</p></footer>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js"
+      integrity="sha512-FJ2OYvUIXUqCcPf1stu+oTBlhn54W0UisZB/TNrZaVMHHhYvLBV9jMbvJYtvDe5x/WVaoXZ6KB+Uqe5hT2vlyA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="./main.js" defer></script>
+  </body>
+</html>

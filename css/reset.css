@@ -1,0 +1,62 @@
+a {
+  text-decoration-line: none;
+  text-decoration: none;
+  transition: color 250ms linear;
+  color: inherit;
+}
+a:hover,
+a:focus,
+a:active {
+  color: #fd9222;
+}
+
+li {
+  list-style-type: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+ul {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+
+  white-space: nowrap;
+  clip-path: inset(100%);
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056a2;
+  color: #f1f1f1;
+  border: 1px solid #ffd700;
+}

@@ -1,0 +1,20 @@
+body {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.darkBody {
+  background-color: #003366;
+  color: #f1f1f1;
+}
+
+.lightBody {
+  background-color: #f1f1f1;
+  color: #003366;
+}
+
+.modeButton {
+  background-color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
