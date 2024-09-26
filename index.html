@@ -36,8 +36,8 @@
           <p>data loading</p>
           <div id="dropAreaField" class="dropAreaField">
             <label for="dropFile" class="dropFileLabel"
-              >Drop file here or click on the button below. You can select only
-              one file at a time.
+              >Drop file here or click on the button below to select a file. You
+              can select only one file at a time.
             </label>
             <input type="file" id="dropFile" class="inputFile" />
           </div>
@@ -78,6 +78,8 @@
             />
             <label for="pieChart"> Pie Chart</label>
           </form>
+
+          <div class="graphSettings"></div>
           <button type="button">Make a graph</button>
         </div>
         <div>
@@ -97,6 +99,8 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <script type="module" src="./index.js" defer></script>
   </body>
 </html>
