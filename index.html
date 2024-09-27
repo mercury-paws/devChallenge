@@ -29,7 +29,7 @@
     </header>
     <main>
       <section>
-        <p>Here will be graph</p>
+        <canvas id="canvas" width="400" height="300"></canvas>
       </section>
       <section>
         <div class="loading">
@@ -55,7 +55,7 @@
         </div>
         <div class="typeOfGraph">
           <p>Choose the graph you prefer:</p>
-          <form>
+          <form class="graphTypeForm">
             <input
               type="radio"
               id="lineGraph"
@@ -93,14 +93,7 @@
     </main>
     <footer><p>footer here will be</p></footer>
 
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js"
-      integrity="sha512-FJ2OYvUIXUqCcPf1stu+oTBlhn54W0UisZB/TNrZaVMHHhYvLBV9jMbvJYtvDe5x/WVaoXZ6KB+Uqe5hT2vlyA=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
     <script type="module" src="./index.js" defer></script>
   </body>
 </html>

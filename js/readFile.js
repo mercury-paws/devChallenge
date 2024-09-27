@@ -1,4 +1,4 @@
-import { appendLineGraphSettings } from "./graphSettings.js";
+import { selectGraph } from "./selectGraph.js";
 
 export const readFile = (file) => {
   const reader = new FileReader();
@@ -23,7 +23,7 @@ export const readFile = (file) => {
     const keys = Object.keys(sheetData[0]);
     console.log(keys);
 
-    appendLineGraphSettings(keys);
+    selectGraph(keys);
   };
 
   reader.readAsArrayBuffer(file);

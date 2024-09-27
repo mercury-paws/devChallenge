@@ -1,4 +1,4 @@
-import {readFile} from "./readFile.js";
+import { readFile } from "./readFile.js";
 
 const dropArea = document.querySelector(".dropAreaField");
 const dropFileLabel = document.querySelector(".dropFileLabel");
