@@ -28,8 +28,9 @@
       <button class="modeButton">Switch to light mode</button>
     </header>
     <main>
-      <section>
-        <canvas id="canvas" width="400" height="300"></canvas>
+      <section class="graphAndPreviewSection">
+        <div class="previewSection"></div>
+        <canvas id="canvas"></canvas>
       </section>
       <section>
         <div class="loading">
@@ -80,7 +81,7 @@
           </form>
 
           <div class="graphSettings"></div>
-          <button type="button">Make a graph</button>
+          <button type="button" class="drawDraph">Draw the graph</button>
         </div>
         <div>
           <p>Choose the way to export data</p>

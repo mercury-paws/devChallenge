@@ -1,3 +1,4 @@
+import { displayPreview } from "./displayPreview.js";
 import { selectGraph } from "./selectGraph.js";
 
 export const readFile = (file) => {
@@ -19,10 +20,11 @@ export const readFile = (file) => {
     );
 
     // Data manipulation
-
+    console.log(sheetData);
     const keys = Object.keys(sheetData[0]);
     console.log(keys);
 
+    displayPreview(sheetData);
     selectGraph(keys);
   };
 

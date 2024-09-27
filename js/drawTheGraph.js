@@ -1,12 +1,14 @@
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+const drawDraph = document.querySelector(".drawDraph");
 
 export const drawGraph = (graphType) => {
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   const xAxis = document.querySelector("input[name=xAxis]:checked");
   const yAxis = document.querySelector("input[name=yAxis]:checked");
 
+  console.log(xAxis);
   if (!xAxis || !yAxis) {
     console.log("Please select both axes before drawing.");
     return;
@@ -24,6 +26,13 @@ export const drawGraph = (graphType) => {
 const drawLineGraph = (xAxisKey, yAxisKey) => {
   // Use actual data based on selected keys (replace random data with actual data)
   ctx.beginPath();
+
+  // let data = sheetData.forEach((row) => {
+  //   Object.values(row).forEach((value) => {
+  //     return value
+  //   })
+  //   });
+
   ctx.moveTo(10, 150); // Starting point
   // Simulate drawing based on selected axis keys
   const dataPoints = [100, 80, 120, 140, 90]; // Example data, replace with actual
@@ -35,3 +44,7 @@ const drawLineGraph = (xAxisKey, yAxisKey) => {
   ctx.strokeStyle = "blue";
   ctx.stroke();
 };
+
+drawDraph.addEventListener("click", () => {
+  drawGraph;
+});

@@ -26,6 +26,18 @@ footer {
   grid-area: f;
 }
 
+.displayPreview {
+  margin-top: 20px;
+  width: 300px;
+  height: 300px;
+  overflow: auto;
+  border: 1px solid #f1f1f1;
+}
+
+.displayPreviewNone {
+  display: none;
+}
+
 @media screen and (min-width: 768px) {
   header {
     text-align: center;
