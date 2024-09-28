@@ -3,9 +3,11 @@ import { appendGraphSettings } from "./graphSettings.js";
 const graphTypeForm = document.querySelector(".graphTypeForm");
 
 let currentKeys = [];
+let currentSheetData = null;
 
-export const selectGraph = (keys) => {
+export const selectGraph = (keys, sheetData) => {
   currentKeys = keys;
+  currentSheetData = sheetData;
   const selectedOption = document.querySelector(
     "input[name=typeOfGraph]:checked"
   );
@@ -20,9 +22,13 @@ export const selectGraph = (keys) => {
     return;
   }
 
-  appendGraphSettings(currentKeys, selectedOption.value);
+  appendGraphSettings(currentKeys, selectedOption.value, sheetData);
 };
 
 graphTypeForm.addEventListener("change", () => {
-  selectGraph(currentKeys);
+  if (!currentSheetData) {
+    console.log("Sheet data is missing. Please reload the data.");
+    return;
+  }
+  selectGraph(currentKeys, currentSheetData);
 });

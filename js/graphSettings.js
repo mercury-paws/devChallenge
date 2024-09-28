@@ -4,27 +4,28 @@ const graphSettings = document.querySelector(".graphSettings");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-export const appendGraphSettings = (keys, selectedGraph) => {
+export const appendGraphSettings = (keys, selectedGraph, sheetData) => {
   event.preventDefault();
+
   graphSettings.textContent = "";
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   switch (selectedGraph) {
     case "lineGraph":
-      axisSelection(keys, "lineGraph");
+      axisSelection(keys, "lineGraph", sheetData);
       break;
     case "barChart":
-      axisSelection(keys, "barChart");
+      axisSelection(keys, "barChart", sheetData);
       break;
     case "pieChart":
-      axisSelection(keys, "pieChart");
+      axisSelection(keys, "pieChart", sheetData);
       break;
     default:
       console.log("no settings for the graph");
   }
 };
 
-const axisSelection = (keys, graphType) => {
+const axisSelection = (keys, graphType, sheetData) => {
   ["x", "y"].forEach((line) => {
     graphSettings.insertAdjacentHTML(
       "beforeend",
@@ -44,10 +45,11 @@ const axisSelection = (keys, graphType) => {
   const yAxisRadioList = document.querySelectorAll(`input[name=yAxis]`);
 
   xAxisRadioList.forEach((radio) => {
-    radio.addEventListener("change", () => drawGraph(graphType));
+    radio.addEventListener("change", () => drawGraph(graphType, sheetData));
   });
 
   yAxisRadioList.forEach((radio) => {
-    radio.addEventListener("change", () => drawGraph(graphType));
+    radio.addEventListener("change", () => drawGraph(graphType, sheetData));
   });
+  console.log("Calling drawGraph with:", graphType, sheetData);
 };
