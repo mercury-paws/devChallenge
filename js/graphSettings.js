@@ -36,7 +36,7 @@ const axisSelection = (keys, graphType, sheetData) => {
       graphSettings.insertAdjacentHTML(
         "beforeend",
         `<label for="lineGraph${line}-${key}">${key}</label>
-    <input type="radio" id="lineGraph${line}-${key}" name="${line}Axis" required />`
+    <input type="radio" id="lineGraph${line}-${key}" name="${line}Axis" required /> <br />`
       );
     });
   });

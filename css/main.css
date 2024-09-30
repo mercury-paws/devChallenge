@@ -37,6 +37,19 @@ footer {
 .displayPreviewNone {
   display: none;
 }
+.chart-container {
+  display: flex;
+}
+
+#canvas {
+  border: 1px solid #ccc;
+}
+
+.legend {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
 
 @media screen and (min-width: 768px) {
   header {
