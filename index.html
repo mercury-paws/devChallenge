@@ -30,9 +30,8 @@
     <main>
       <section class="graphAndPreviewSection">
         <div class="previewSection"></div>
-        <div class="chart-container">
+        <div class="chart-container" style="overflow: auto">
           <canvas id="canvas"></canvas>
-          <div id="legend" class="legend"></div>
         </div>
       </section>
       <section>
@@ -84,12 +83,14 @@
           </form>
 
           <div class="graphSettings"></div>
-          <button type="button" class="drawDraph">Draw the graph</button>
+          <button type="button" class="drawDraphBtn">Draw the graph</button>
         </div>
         <div>
           <p>Choose the way to export data</p>
           <div class="exportButtons">
-            <button>Download</button>
+            <button class="downloadAsPDF">Download as PDF</button>
+            <button class="downloadAsSVG">Download as SVG</button>
+            <button class="downloadAsPNG">Download as PNG</button>
             <button>Print</button>
           </div>
         </div>

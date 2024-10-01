@@ -26,6 +26,7 @@ export const readFile = (file) => {
 
     // displayPreview(sheetData);
     selectGraph(keys, sheetData);
+    displayPreview(sheetData);
   };
 
   reader.readAsArrayBuffer(file);

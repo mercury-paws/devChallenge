@@ -1,6 +1,8 @@
 const previewSection = document.querySelector(".previewSection");
+const canvas = document.getElementById("canvas");
 
 export const displayPreview = (sheetData) => {
+  canvas.classList.add("displayNone");
   previewSection.classList.add("displayPreview");
   previewSection.innerHTML = `
   <h3>File Preview:</h3>
@@ -37,3 +39,11 @@ export const displayPreview = (sheetData) => {
     tableBody.appendChild(tableRow);
   });
 };
+
+const drawDraphBtn = document.querySelector(".drawDraphBtn");
+
+drawDraphBtn.addEventListener("click", () => {
+  // canvas.classList.add("");
+  canvas.classList.remove("displayNone");
+  previewSection.classList.add("displayNone");
+});

@@ -7,11 +7,11 @@ const ctx = canvas.getContext("2d");
 let graphTypeUpdate;
 let dataUpdate;
 const legendWidth = 150;
-const canvasHeight = 600;
+const canvasHeight = 700;
 
 const updateCanvasSize = () => {
   canvas.height = canvasHeight;
-  canvas.width = window.innerWidth - legendWidth;
+  canvas.width = window.innerWidth - 50;
 };
 updateCanvasSize();
 
@@ -36,9 +36,6 @@ export function drawGraph(graphType, data) {
     return;
   }
 
-  const legendDiv = document.getElementById("legend");
-  legendDiv.innerHTML = ""; // Clear previous legends
-
   let x = xAxis.id.replace("lineGraphx-", "");
   let y = yAxis.id.replace("lineGraphy-", "");
   // Evaluate data based on selected axes
@@ -50,9 +47,9 @@ export function drawGraph(graphType, data) {
   if (graphType === "lineGraph") {
     drawLineGraph(evaluatedData, x, y); // Pass evaluatedData directly
   } else if (graphType === "barChart") {
-    drawBarChart(evaluatedData); // Pass evaluatedData directly
+    drawBarChart(evaluatedData, x, y); // Pass evaluatedData directly
   } else if (graphType === "pieChart") {
-    drawPieChart(evaluatedData); // Pass evaluatedData directly
+    drawPieChart(evaluatedData, x, y); // Pass evaluatedData directly
   }
 }
 
@@ -66,7 +63,7 @@ const normalizeData = (data, canvasSize, padding = 50) => {
 };
 
 const drawAxes = (xLabels, yLabels, evaluatedData) => {
-  const xAxisY = canvas.height - 50; // Y position for x-axis
+  const xAxisY = canvas.height - 40; // Y position for x-axis
   const yAxisX = 50; // X position for y-axis
 
   // Draw x-axis
@@ -178,20 +175,21 @@ const drawSingleLine = (xData, yNormalized, color, label, data, index) => {
   ctx.closePath();
 
   if (label) {
-    drawLegend(label, color, data, index); // Add a legend for each subcategory
+    drawLegend(label, color, index); // Add a legend for each subcategory
   }
 };
 
 // Helper function to draw a legend
-const drawLegend = (label, color, data, index) => {
-  const legendDiv = document.getElementById("legend");
-  const legendItem = document.createElement("div");
+function drawLegend(label, color, index) {
+  const legendX = canvas.width - 150; // X position for the legend, adjust as needed
+  const legendY = index * 30; // Y position for the legend, spaced by 30 pixels for each item
 
-  legendItem.style.color = color;
-  legendItem.textContent = label;
+  ctx.fillStyle = color; // Set the color for the legend item
+  ctx.fillRect(legendX, legendY, 20, 20); // Draw a colored square for the legend
 
-  legendDiv.appendChild(legendItem);
-};
+  ctx.fillStyle = "black"; // Set the color for the label text
+  ctx.fillText(label, legendX + 25, legendY + 15); // Draw the label next to the square
+}
 
 // Generate a list of unique colors
 function generateColors(count) {
@@ -203,27 +201,52 @@ function generateColors(count) {
 }
 
 // Draw Bar Chart
-const drawBarChart = (data) => {
+const drawBarChart = (data, x, y) => {
   const xData = Object.keys(data).map(Number); // Get years as numbers
   const yData = Object.values(data); // Get corresponding values
+
   const xNormalized = normalizeData(xData, canvas.width);
 
   const barWidth = canvas.width / xData.length; // Calculate bar width for each year
+  const yOffset = 50; // Move graph up by 50 pixels for better positioning
+  const leftOffset = 0; // move to left
 
-  // Generate category colors based on the categories in the first year of data
-  const categoriesArray = Object.keys(yData[0] || {}); // Assuming all years have the same categories
-  const colors = generateColors(categoriesArray.length);
+  // Collect all unique categories from the data to ensure consistent colors
+  const uniqueCategories = new Set();
+  yData.forEach((yearData) => {
+    if (typeof yearData === "object") {
+      Object.keys(yearData).forEach((category) =>
+        uniqueCategories.add(category)
+      );
+    }
+  });
+
+  const categoriesArray = Array.from(uniqueCategories); // Convert Set to Array
+  const colors = generateColors(categoriesArray.length); // Generate colors for unique categories
+
+  // Create a category-to-color mapping for consistent color assignment
+  const categoryColorMap = categoriesArray.reduce((map, category, index) => {
+    map[category] = colors[index];
+    return map;
+  }, {});
+
+  Object.entries(categoryColorMap).forEach(([label, color]) => {
+    drawLegend(label, color); // Call drawLegend for each label-color pair
+  });
+
+  console.log(categoryColorMap);
 
   // Check if the year data is a number (simple data) or an object (complex data)
   if (typeof yData[0] === "number") {
+    drawAxes(xData, yData, data);
     // Simple case: Draw a single bar
-    const yNormalized = normalizeData(yData, canvas.height); // Normalize the height
-
+    const yNormalized = normalizeData(yData, canvas.height - yOffset); // Normalize the height
+    drawLegend(y, "#e74c3c", 1);
     for (let i = 0; i < xData.length; i++) {
       ctx.beginPath();
       ctx.rect(
-        xNormalized[i],
-        canvas.height - yNormalized[i], // Invert y-axis
+        xNormalized[i] - leftOffset,
+        canvas.height - yNormalized[i] - yOffset, // Invert y-axis
         barWidth - 10, // Adjust bar width
         yNormalized[i]
       );
@@ -233,6 +256,7 @@ const drawBarChart = (data) => {
       ctx.closePath();
     }
   } else if (typeof yData[0] === "object") {
+    drawXAxes(xData, yData, data);
     // Complex case: Multiple categories
     yData.forEach((yearData, index) => {
       let accumulatedHeight = 0; // Reset for each year
@@ -243,20 +267,31 @@ const drawBarChart = (data) => {
 
       // Draw each category segment within the bar
       Object.entries(yearData).forEach(([category, value]) => {
-        const yNormalized = (value / totalHeight) * (canvas.height - 50); // Normalize height based on total height
-        const categoryIndex = categoriesArray.indexOf(category); // Find index of category for color assignment
+        const yNormalized =
+          (value / totalHeight) * (canvas.height - 50 - yOffset); // Normalize height based on total height
+
+        const barX = xNormalized[index] + 5 - leftOffset + index * 20; // X position of the segment
+        const barY = canvas.height - accumulatedHeight - yNormalized - yOffset; // Y position of the segment
 
         ctx.beginPath();
         ctx.rect(
-          xNormalized[index] + 5, // Add some padding
-          canvas.height - accumulatedHeight - yNormalized, // Invert y-axis for correct position
+          barX, // Use calculated barX
+          barY, // Use calculated barY
           barWidth - 10, // Set bar width
           yNormalized // Segment height
         );
 
-        ctx.fillStyle = colors[categoryIndex]; // Use generated colors based on index
+        // Use the category-to-color mapping for consistent colors
+        ctx.fillStyle = categoryColorMap[category] || "#000"; // Fallback to black if no color found
         ctx.fill();
         ctx.closePath();
+
+        // Calculate label position
+        const labelX = barX + (barWidth - 10) / 2 - 15; // Center label horizontally
+        const labelY = barY + 25; // Position it slightly above the bar segment
+
+        ctx.fillStyle = "black"; // Color of the label text
+        ctx.fillText(value, labelX, labelY); //
 
         accumulatedHeight += yNormalized; // Update accumulated height for stacking segments
       });
@@ -265,27 +300,134 @@ const drawBarChart = (data) => {
 };
 
 // Draw Pie Chart
-const drawPieChart = (data) => {
-  const yData = Object.values(data); // Get the values for the pie chart
-  const total = yData.reduce((acc, val) => acc + val, 0);
-  const centerX = canvas.width / 2;
-  const centerY = canvas.height / 2;
-  const radius = Math.min(canvas.width, canvas.height) / 4;
+const drawPieChart = (data, x, y) => {
+  const xData = Object.keys(data).map(Number); // Extract years
+  const yData = Object.values(data); // Get corresponding data for each year
+  const categoriesArray = Object.keys(yData[0]);
 
-  let startAngle = 0;
+  //////
+  const colors = generateColors(categoriesArray.length); // Generate colors for unique categories
 
-  yData.forEach((value, index) => {
-    const sliceAngle = (value / total) * 2 * Math.PI;
-    const endAngle = startAngle + sliceAngle;
+  // Create a category-to-color mapping for consistent color assignment
+  const categoryColorMap = categoriesArray.reduce((map, category, index) => {
+    map[category] = colors[index];
+    return map;
+  }, {});
 
+  Object.entries(categoryColorMap).forEach(([label, color]) => {
+    drawLegend(label, color); // Call drawLegend for each label-color pair
+  }); ////
+  const totalYears = xData.length;
+  const radius = Math.min(canvas.width / totalYears, canvas.height) / 4; // Adjust radius based on canvas size
+
+  let xOffset = 0;
+  const piesPerRow = Math.floor(canvas.width / (200 + 20)); // 200 is pie diameter, 20 is padding
+  const pieDiameter = 200; // Fixed diameter for each pie
+  const pieRadius = pieDiameter / 2;
+  const verticalOffset = 50;
+
+  if (typeof yData[0] === "number") {
+    const total = yData.reduce((acc, val) => acc + val, 0);
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(canvas.width, canvas.height) / 4;
+
+    let startAngle = 0;
+
+    yData.forEach((value, index) => {
+      const sliceAngle = (value / total) * 2 * Math.PI;
+      const endAngle = startAngle + sliceAngle;
+
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+      ctx.closePath();
+
+      ctx.fillStyle = `hsl(${(index / yData.length) * 360}, 70%, 60%)`;
+      ctx.fill();
+
+      const labelX = centerX + 170 * Math.cos(startAngle + sliceAngle / 2); // Position X
+      const labelY = centerY + 170 * Math.sin(startAngle + sliceAngle / 2); // Position Y
+
+      ctx.fillStyle = "black"; // Color of the label text
+      ctx.fillText(value, labelX, labelY);
+
+      startAngle = endAngle;
+    });
+    drawLegend(y);
+  } else if (typeof yData[0] === "object") {
+    yData.forEach((yearData, yearIndex) => {
+      const total = Object.values(yearData).reduce((acc, val) => acc + val, 0); // Calculate total for the year
+      let startAngle = 0;
+
+      const rowIndex = Math.floor(yearIndex / piesPerRow);
+      const colIndex = yearIndex % piesPerRow;
+
+      const centerX = colIndex * (pieDiameter + 20) + pieRadius; // Center X based on column
+      const centerY =
+        rowIndex * (pieDiameter + 20) + pieRadius + verticalOffset;
+
+      Object.entries(yearData).forEach(([category, value], index) => {
+        const sliceAngle = (value / total) * 2 * Math.PI;
+        const endAngle = startAngle + sliceAngle;
+
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, pieRadius, startAngle, endAngle);
+        ctx.closePath();
+
+        ctx.fillStyle =
+          categoryColorMap[category] ||
+          `hsl(${(index / categoriesArray.length) * 360}, 70%, 60%)`;
+        ctx.fill();
+
+        const labelX =
+          centerX + (pieRadius / 2) * Math.cos(startAngle + sliceAngle / 2); // Position X
+        const labelY =
+          centerY + (pieRadius / 2) * Math.sin(startAngle + sliceAngle / 2); // Position Y
+
+        ctx.fillStyle = "black"; // Color of the label text
+        ctx.fillText(value, labelX, labelY);
+
+        startAngle = endAngle;
+      });
+
+      xOffset += 2 * radius + 50; // Move to the right for the next pie chart
+    });
+
+    const canvasParent = canvas.parentElement;
+    canvasParent.style.width = "800px";
+    canvasParent.style.overflowX = "auto";
+  }
+};
+
+const drawXAxes = (xLabels, yLabels, evaluatedData) => {
+  const xAxisY = canvas.height - 40; // Y position for x-axis
+  const yAxisX = 50; // X position for y-axis
+
+  // Draw x-axis
+  ctx.beginPath();
+  ctx.moveTo(0, xAxisY); // Start at the left end of the x-axis
+  ctx.lineTo(canvas.width, xAxisY); // Draw to the right end of the x-axis
+  ctx.strokeStyle = "#000"; // Set the color of the axes
+  ctx.lineWidth = 2; // Set the line width
+  ctx.stroke(); // Actually draw the x-axis
+  ctx.closePath();
+
+  // Draw y-axis
+
+  // Draw x-axis ticks and labels
+  const xTickSpacing = (canvas.width - 50) / (xLabels.length - 1); // Spacing between x ticks
+  xLabels.forEach((label, index) => {
+    const xPosition = yAxisX + index * xTickSpacing; // Calculate x position for each label
     ctx.beginPath();
-    ctx.moveTo(centerX, centerY);
-    ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+    ctx.moveTo(xPosition, xAxisY); // Start tick line
+    ctx.lineTo(xPosition, xAxisY + 5); // Draw tick line
+    ctx.stroke(); // Draw the tick
+
+    ctx.fillText(label, xPosition - 10, xAxisY + 20); // Draw label
     ctx.closePath();
-
-    ctx.fillStyle = `hsl(${(index / yData.length) * 360}, 70%, 60%)`;
-    ctx.fill();
-
-    startAngle = endAngle;
   });
+
+  // Step 1: Collect all y-values from the evaluated data
 };
