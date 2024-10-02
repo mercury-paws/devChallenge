@@ -1,9 +1,12 @@
 import { readFile } from "./readFile.js";
 import { readCSV } from "./readCSV.js";
 import { readJSON } from "./readJSON.js";
-import { readTableData } from "./readTableData.js";
+// import { readTableData } from "./readTableData.js";
 const previewSection = document.querySelector(".previewSection");
 const canvas = document.getElementById("canvas");
+
+const graphSettings = document.querySelector(".graphSettings");
+
 const ctx = canvas.getContext("2d");
 
 const dropArea = document.querySelector(".dropAreaField");
@@ -38,16 +41,16 @@ function preventDefault(e) {
 // Handle dropped files
 dropArea.addEventListener("drop", handleDrop);
 
-submitTextButton.addEventListener("click", () => {
-  const textData = textArea.value.trim();
+// submitTextButton.addEventListener("click", () => {
+//   const textData = textArea.value.trim();
 
-  if (!textData) {
-    alert("Text area is empty. Please enter some data.");
-    return;
-  }
+//   if (!textData) {
+//     alert("Text area is empty. Please enter some data.");
+//     return;
+//   }
 
-  readTableData(textData);
-});
+//   readTableData(textData);
+// });
 
 function handleDrop(event) {
   const dt = event.dataTransfer;
@@ -75,10 +78,12 @@ function handleFile(file) {
 }
 
 clearBtn.addEventListener("click", () => {
-  textArea.value = "";
+  // textArea.value = "";
   previewSection.textContent = "";
 
   dropFileLabel.textContent = "Drag and drop a file here or click to upload";
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   dropArea.classList.remove("highlight");
+
+  graphSettings.textContent = "";
 });
