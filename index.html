@@ -21,22 +21,20 @@
     />
     <link rel="stylesheet" href="./index.css" />
   </head>
-  <body class="darkBody">
+  <body class="darkHeader">
     <header>
-      <h2>Ministry of Foreign Affairs of Ukraine</h2>
       <h1>The tool for data visualisation</h1>
-      <button class="modeButton">Switch to light mode</button>
+      <button class="modeButton">Switch to dark mode</button>
     </header>
-    <main>
+    <main class="lightBody">
       <section class="graphAndPreviewSection">
-        <div class="previewSection"></div>
+        <div class="previewSection" style="height: 700px"></div>
         <div class="chart-container" style="overflow: auto">
-          <canvas id="canvas"></canvas>
+          <canvas id="canvas" class="displayNone"></canvas>
         </div>
       </section>
       <section>
         <div class="loading">
-          <p>data loading</p>
           <div id="dropAreaField" class="dropAreaField">
             <label for="dropFile" class="dropFileLabel"
               >Drop file here or click on the button below to select a file. You
@@ -53,37 +51,44 @@
               rows="5"
               cols="30"
               placeholder="Write data"
+              class="textarea"
             />
           </div>
+          <button type="button" class="drawDraphBtn">Draw the graph</button>
         </div>
         <div class="typeOfGraph">
           <p>Choose the graph you prefer:</p>
           <form class="graphTypeForm">
-            <input
-              type="radio"
-              id="lineGraph"
-              name="typeOfGraph"
-              value="lineGraph"
-            />
-            <label for="lineGraph"> Line Graph</label><br />
-            <input
-              type="radio"
-              id="barChart"
-              name="typeOfGraph"
-              value="barChart"
-            />
-            <label for="barChart"> Bar Chart</label><br />
-            <input
-              type="radio"
-              id="pieChart"
-              name="typeOfGraph"
-              value="pieChart"
-            />
-            <label for="pieChart"> Pie Chart</label>
+            <div class="radioGraph">
+              <input
+                type="radio"
+                id="lineGraph"
+                name="typeOfGraph"
+                value="lineGraph"
+              />
+              <label for="lineGraph"> Line Graph</label><br />
+            </div>
+            <div class="radioGraph">
+              <input
+                type="radio"
+                id="barChart"
+                name="typeOfGraph"
+                value="barChart"
+              />
+              <label for="barChart"> Bar Chart</label><br />
+            </div>
+            <div class="radioGraph">
+              <input
+                type="radio"
+                id="pieChart"
+                name="typeOfGraph"
+                value="pieChart"
+              />
+              <label for="pieChart"> Pie Chart</label>
+            </div>
           </form>
 
           <div class="graphSettings"></div>
-          <button type="button" class="drawDraphBtn">Draw the graph</button>
         </div>
         <div>
           <p>Choose the way to export data</p>

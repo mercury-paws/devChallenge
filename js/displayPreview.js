@@ -1,8 +1,9 @@
 const previewSection = document.querySelector(".previewSection");
 const canvas = document.getElementById("canvas");
 
+let updateData;
 export const displayPreview = (sheetData) => {
-  canvas.classList.add("displayNone");
+  // canvas.classList.add("displayNone");
   previewSection.classList.add("displayPreview");
   previewSection.innerHTML = `
   <h3>File Preview:</h3>
@@ -12,6 +13,7 @@ export const displayPreview = (sheetData) => {
   </table>
   `;
 
+  updateData = sheetData;
   const previewTable = document.getElementById("filePreviewTable");
   const tableHead = previewTable.querySelector("thead");
   const tableBody = previewTable.querySelector("tbody");
@@ -21,7 +23,7 @@ export const displayPreview = (sheetData) => {
 
   const headerRow = document.createElement("tr");
 
-  Object.keys(sheetData[0]).forEach((key) => {
+  Object.keys(updateData[0]).forEach((key) => {
     const th = document.createElement("th");
     th.textContent = key;
     headerRow.appendChild(th);
@@ -29,7 +31,7 @@ export const displayPreview = (sheetData) => {
   tableHead.appendChild(headerRow);
 
   // Display the first 5 rows of data for preview (or more if needed)
-  sheetData.slice(0, 5).forEach((row) => {
+  updateData.slice(0, 10).forEach((row) => {
     const tableRow = document.createElement("tr");
     Object.values(row).forEach((cellValue) => {
       const cell = document.createElement("td");
@@ -40,10 +42,24 @@ export const displayPreview = (sheetData) => {
   });
 };
 
-const drawDraphBtn = document.querySelector(".drawDraphBtn");
+////////////////////////////////////////////////// draw graph / preview btn ////////////////////////////////////////////////
 
+const drawDraphBtn = document.querySelector(".drawDraphBtn");
 drawDraphBtn.addEventListener("click", () => {
   // canvas.classList.add("");
-  canvas.classList.remove("displayNone");
-  previewSection.classList.add("displayNone");
+  canvas.classList.toggle("displayNone");
+  previewSection.classList.toggle("displayNone");
+});
+
+////////////////////////////////////////////////// draw graph / preview btn ////////////////////////////////////////////////
+
+const updatePreviewSize = () => {
+  previewSection.style.height = "700px";
+  previewSection.style.width = `${window.innerWidth}px`;
+};
+updatePreviewSize();
+
+window.addEventListener("resize", () => {
+  updatePreviewSize(); // Update canvas size on resize
+  // displayPreview(updateData);
 });

@@ -1,15 +1,15 @@
-const body = document.querySelector("body");
+const main = document.querySelector("main");
 const modeButton = document.querySelector(".modeButton");
 
 modeButton.addEventListener("click", () => {
   if (
-    body.getAttribute("class") === "darkBody" &&
-    modeButton.textContent === "Switch to light mode"
+    main.getAttribute("class") === "lightBody" &&
+    modeButton.textContent === "Switch to dark mode"
   ) {
-    body.setAttribute("class", "lightBody");
-    modeButton.textContent = "Switch to dark mode";
-  } else {
-    body.setAttribute("class", "darkBody");
+    main.setAttribute("class", "darkBody");
     modeButton.textContent = "Switch to light mode";
+  } else {
+    main.setAttribute("class", "lightBody");
+    modeButton.textContent = "Switch to dark mode";
   }
 });

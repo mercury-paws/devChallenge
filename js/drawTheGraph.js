@@ -1,12 +1,10 @@
 import { evaluateData } from "./evaluateData.js";
 
-const drawDraph = document.querySelector(".drawDraph");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 let graphTypeUpdate;
 let dataUpdate;
-const legendWidth = 150;
 const canvasHeight = 700;
 
 const updateCanvasSize = () => {

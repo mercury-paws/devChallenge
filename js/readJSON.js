@@ -5,12 +5,9 @@ export const readJSON = (file) => {
 
   reader.onload = function (event) {
     const jsonData = JSON.parse(event.target.result);
-
-    // Assuming the JSON data is an array of objects
-    console.log(jsonData); // Output the JSON data
-    selectGraph(Object.keys(jsonData[0]), jsonData); // Call selectGraph with keys and data
-    displayPreview(sheetData);
+    selectGraph(Object.keys(jsonData[0]), jsonData);
+    displayPreview(jsonData);
   };
 
-  reader.readAsText(file); // Read as text for JSON
+  reader.readAsText(file);
 };

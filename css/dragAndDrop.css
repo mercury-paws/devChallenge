@@ -1,16 +1,23 @@
 .dropAreaField {
   border: 2px dashed #ccc;
   border-radius: 10px;
-  padding: 20px;
+  padding: 20px 20px 20px 20px;
   width: 300px;
   text-align: center;
-  margin: 20px auto 50px auto;
+  margin: 50px 16px 50px 16px;
   position: relative;
   cursor: pointer;
 }
 
 .dropAreaField.highlight {
   border-color: purple;
+}
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
 }
 
 .inputFile {
@@ -21,4 +28,16 @@
   flex-wrap: row;
   width: 300px;
   flex-shrink: unset;
+}
+.textarea {
+  height: 100px;
+  width: 300px;
+  margin-left: 16px;
+  border-radius: 10px;
+}
+
+@media screen and (min-width: 768px) {
+  .loading {
+    flex-direction: row;
+  }
 }

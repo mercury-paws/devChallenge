@@ -26,19 +26,36 @@ export const appendGraphSettings = (keys, selectedGraph, sheetData) => {
 };
 
 const axisSelection = (keys, graphType, sheetData) => {
-  ["x", "y"].forEach((line) => {
-    graphSettings.insertAdjacentHTML(
+  // Set up the container for axis options
+  graphSettings.insertAdjacentHTML(
+    "beforeend",
+    `<div class="axis-selection-container" style="display: flex; gap: 20px; margin-bottom: 20px;">
+      <div class="x-axis-section">
+        <p style="margin-right: 10px;">Select a value for x axis:</p>
+        <div id="x-axis-options" style="display: flex; flex-direction: column; gap: 5px;"></div>
+      </div>
+      <div class="y-axis-section">
+        <p style="margin-right: 10px;">Select a value for y axis:</p>
+        <div id="y-axis-options" style="display: flex; flex-direction: column; gap: 5px;"></div>
+      </div>
+    </div>`
+  );
+
+  // Append options for X and Y axis separately
+  keys.forEach((key) => {
+    document.getElementById("x-axis-options").insertAdjacentHTML(
       "beforeend",
-      `<p>Select a value for ${line} axis:</p>`
+      `<label for="lineGraphx-${key}" style="margin: 5px 0;">${key}
+          <input type="radio" id="lineGraphx-${key}" name="xAxis" required />
+      </label>`
     );
 
-    keys.forEach((key) => {
-      graphSettings.insertAdjacentHTML(
-        "beforeend",
-        `<label for="lineGraph${line}-${key}">${key}</label>
-    <input type="radio" id="lineGraph${line}-${key}" name="${line}Axis" required /> <br />`
-      );
-    });
+    document.getElementById("y-axis-options").insertAdjacentHTML(
+      "beforeend",
+      `<label for="lineGraphy-${key}" style="margin: 5px 0;">${key}
+          <input type="radio" id="lineGraphy-${key}" name="yAxis" required />
+      </label>`
+    );
   });
 
   const xAxisRadioList = document.querySelectorAll(`input[name=xAxis]`);
