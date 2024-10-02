@@ -6,7 +6,7 @@ const ctx = canvas.getContext("2d");
 let graphTypeUpdate;
 let dataUpdate;
 const canvasHeight = 700;
-
+const yOffset = 50;
 const updateCanvasSize = () => {
   canvas.height = canvasHeight;
   canvas.width = window.innerWidth - 50;
@@ -28,7 +28,6 @@ export function drawGraph(graphType, data) {
   const xAxis = document.querySelector("input[name=xAxis]:checked");
   const yAxis = document.querySelector("input[name=yAxis]:checked");
 
-  console.log(xAxis);
   if (!xAxis || !yAxis) {
     console.log("Please select both axes before drawing.");
     return;
@@ -36,22 +35,22 @@ export function drawGraph(graphType, data) {
 
   let x = xAxis.id.replace("lineGraphx-", "");
   let y = yAxis.id.replace("lineGraphy-", "");
+
   // Evaluate data based on selected axes
   const evaluatedData = evaluateData(x, y, dataUpdate);
 
-  console.log("Evaluated Data:", evaluatedData); // Log the evaluated data
+  console.log("Evaluated Data:", evaluatedData);
 
   // Draw the graph based on the evaluated data
   if (graphType === "lineGraph") {
-    drawLineGraph(evaluatedData, x, y); // Pass evaluatedData directly
+    drawLineGraph(evaluatedData, x, y);
   } else if (graphType === "barChart") {
-    drawBarChart(evaluatedData, x, y); // Pass evaluatedData directly
+    drawBarChart(evaluatedData, x, y);
   } else if (graphType === "pieChart") {
-    drawPieChart(evaluatedData, x, y); // Pass evaluatedData directly
+    drawPieChart(evaluatedData, x, y);
   }
 }
 
-// Function to normalize data to fit within the canvas dimensions
 const normalizeData = (data, canvasSize, padding = 50) => {
   const max = Math.max(...data);
   const min = Math.min(...data);
@@ -61,110 +60,102 @@ const normalizeData = (data, canvasSize, padding = 50) => {
 };
 
 const drawAxes = (xLabels, yLabels, evaluatedData) => {
-  const xAxisY = canvas.height - 40; // Y position for x-axis
+  const graphHeight = canvas.height - 100; // Reduce height by 50px
+  const graphWidth = canvas.width - 70; // Reduce width by 20px
+  const xAxisY = graphHeight - 40 + yOffset; // Y position for x-axis
   const yAxisX = 50; // X position for y-axis
 
   // Draw x-axis
   ctx.beginPath();
-  ctx.moveTo(0, xAxisY); // Start at the left end of the x-axis
-  ctx.lineTo(canvas.width, xAxisY); // Draw to the right end of the x-axis
-  ctx.strokeStyle = "#000"; // Set the color of the axes
-  ctx.lineWidth = 2; // Set the line width
-  ctx.stroke(); // Actually draw the x-axis
+  ctx.moveTo(0, xAxisY);
+  ctx.lineTo(graphWidth, xAxisY);
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 2;
+  ctx.stroke();
   ctx.closePath();
 
   // Draw y-axis
   ctx.beginPath();
-  ctx.moveTo(yAxisX, 0); // Start at the top end of the y-axis
-  ctx.lineTo(yAxisX, canvas.height); // Draw to the bottom end of the y-axis
-  ctx.stroke(); // Actually draw the y-axis
+  ctx.moveTo(yAxisX, yOffset);
+  ctx.lineTo(yAxisX, graphHeight + yOffset);
+  ctx.stroke();
   ctx.closePath();
 
   // Draw x-axis ticks and labels
-  const xTickSpacing = (canvas.width - 50) / (xLabels.length - 1); // Spacing between x ticks
+  const xTickSpacing = (graphWidth - 50) / (xLabels.length - 1);
   xLabels.forEach((label, index) => {
-    const xPosition = yAxisX + index * xTickSpacing; // Calculate x position for each label
+    const xPosition = yAxisX + index * xTickSpacing;
     ctx.beginPath();
-    ctx.moveTo(xPosition, xAxisY); // Start tick line
-    ctx.lineTo(xPosition, xAxisY + 5); // Draw tick line
-    ctx.stroke(); // Draw the tick
+    ctx.moveTo(xPosition, xAxisY);
+    ctx.lineTo(xPosition, xAxisY + 5);
+    ctx.stroke();
 
-    ctx.fillText(label, xPosition - 10, xAxisY + 20); // Draw label
+    ctx.fillText(label, xPosition - 10, xAxisY + 20);
     ctx.closePath();
   });
 
-  // Step 1: Collect all y-values from the evaluated data
   let allYValues = [];
-
-  // Determine if evaluatedData is simple or complex
   if (typeof evaluatedData[xLabels[0]] === "number") {
-    // Simple case: e.g., { "2000": 1224, "2001": 1354, ... }
     allYValues = Object.values(evaluatedData);
   } else {
-    // Complex case: e.g., { "2000": { "Consulate": 6, ... }, ... }
     allYValues = Object.values(evaluatedData).flatMap((dataPoint) =>
       Object.values(dataPoint)
     );
   }
 
-  // Step 2: Get unique y-values
   const uniqueYValues = Array.from(new Set(allYValues)).sort((a, b) => a - b);
-
-  // Step 3: Determine min and max y-values for scaling
   const yMin = Math.min(...uniqueYValues);
   const yMax = Math.max(...uniqueYValues);
 
-  // Step 4: Draw y-axis ticks and labels
-  const yTickSpacing = (canvas.height - 50) / 5; // Create 5 ticks for the y-axis
+  const yTickSpacing = (graphHeight - 50) / 5;
 
   for (let i = 0; i <= 5; i++) {
-    const yPosition = canvas.height - i * yTickSpacing - 50; // Calculate y position
+    const yPosition = graphHeight - i * yTickSpacing - 50 + yOffset;
     ctx.beginPath();
-    ctx.moveTo(yAxisX - 5, yPosition); // Start tick line
-    ctx.lineTo(yAxisX, yPosition); // Draw tick line
-    ctx.stroke(); // Draw the tick
+    ctx.moveTo(yAxisX - 5, yPosition);
+    ctx.lineTo(yAxisX, yPosition);
+    ctx.stroke();
 
-    const yLabel = Math.round(yMin + (yMax - yMin) * (i / 5)); // Calculate corresponding label
-    ctx.fillText(yLabel, yAxisX - 40, yPosition + 5); // Draw y value label
+    const yLabel = Math.round(yMin + (yMax - yMin) * (i / 5));
+    ctx.fillText(yLabel, yAxisX - 40, yPosition + 5);
     ctx.closePath();
   }
 };
 
-// Draw Line Graph
 const drawLineGraph = (data, xVal, yVal) => {
-  const xData = Object.keys(data).map(Number); // Extract years as numbers
-  const yData = Object.values(data); // Get corresponding values
+  const graphHeight = canvas.height - 100; // Adjusted graph height
+  const graphWidth = canvas.width - 70; // Adjusted graph width
+  const xData = Object.keys(data).map(Number);
+  const yData = Object.values(data);
+
   drawAxes(xData, yData, data);
-  // Check if data is a simple series (single number per year) or complex series (multiple subcategories)
+
   if (typeof yData[0] === "number") {
-    // Simple case: Single line graph
-    const yNormalized = normalizeData(yData, canvas.height);
+    const yNormalized = normalizeData(yData, graphHeight);
     drawSingleLine(xData, yNormalized, "#3498db", yVal);
   } else if (typeof yData[0] === "object") {
-    // Complex case: Multiple subcategories
-    const subCategories = Object.keys(yData[0]); // Get the keys like "Consul", "Deputy Minister", etc.
+    const subCategories = Object.keys(yData[0]);
+    const colors = generateColors(subCategories.length);
 
-    const colors = generateColors(subCategories.length); // Generate different colors for each subcategory
-
-    // Draw a separate line for each subcategory
     subCategories.forEach((subCat, index) => {
-      const ySubData = yData.map((yearData) => yearData[subCat] || 0); // Get subcategory data for each year
-      const yNormalized = normalizeData(ySubData, canvas.height);
+      const ySubData = yData.map((yearData) => yearData[subCat] || 0);
+      const yNormalized = normalizeData(ySubData, graphHeight);
 
       drawSingleLine(xData, yNormalized, colors[index], subCat, data, index);
     });
   }
 };
 
-// Helper function to draw a single line given x and y data
 const drawSingleLine = (xData, yNormalized, color, label, data, index) => {
-  const xNormalized = normalizeData(xData, canvas.width);
+  const graphWidth = canvas.width - 70;
+  const graphHeight = canvas.height - 100;
+  const xNormalized = normalizeData(xData, graphWidth);
 
   ctx.beginPath();
-  ctx.moveTo(xNormalized[0], canvas.height - yNormalized[0]); // Invert y-axis for canvas
+  ctx.moveTo(xNormalized[0], graphHeight - yNormalized[0] + yOffset);
 
   for (let i = 1; i < xData.length; i++) {
-    ctx.lineTo(xNormalized[i], canvas.height - yNormalized[i]); // Invert y-axis for canvas
+    ctx.lineTo(xNormalized[i], graphHeight - yNormalized[i] + yOffset);
   }
 
   ctx.strokeStyle = color;
@@ -173,7 +164,7 @@ const drawSingleLine = (xData, yNormalized, color, label, data, index) => {
   ctx.closePath();
 
   if (label) {
-    drawLegend(label, color, index); // Add a legend for each subcategory
+    drawLegend(label, color, index);
   }
 };
 
@@ -198,17 +189,92 @@ function generateColors(count) {
   return colors;
 }
 
+function drawBarLegend(label, color, index) {
+  const legendX = canvas.width - 900 + index * 100; // X position for the legend, adjusted to be spaced horizontally
+  const legendY = 600; // Keep Y position constant for horizontal layout
+
+  ctx.fillStyle = color; // Set the color for the legend item
+  ctx.fillRect(legendX, legendY, 20, 20); // Draw a colored square for the legend
+
+  ctx.fillStyle = "black"; // Set the color for the label text
+  ctx.fillText(label, legendX + 25, legendY + 15); // Draw the label next to the square
+}
+const drawBarAxes = (xLabels, yLabels, evaluatedData) => {
+  const graphHeight = canvas.height - 120; // Reduce height by 50px
+  const graphWidth = canvas.width - 70; // Reduce width by 20px
+  const xAxisY = graphHeight - 40 + yOffset; // Y position for x-axis
+  const yAxisX = 50; // X position for y-axis
+
+  // Draw x-axis
+  ctx.beginPath();
+  ctx.moveTo(0, xAxisY);
+  ctx.lineTo(graphWidth, xAxisY);
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.closePath();
+
+  // Draw y-axis
+  ctx.beginPath();
+  ctx.moveTo(yAxisX, yOffset);
+  ctx.lineTo(yAxisX, graphHeight + yOffset);
+  ctx.stroke();
+  ctx.closePath();
+
+  // Draw x-axis ticks and labels
+  const xTickSpacing = (graphWidth - 50) / (xLabels.length - 1);
+  xLabels.forEach((label, index) => {
+    const xPosition = yAxisX + index * xTickSpacing;
+    ctx.beginPath();
+    ctx.moveTo(xPosition, xAxisY);
+    ctx.lineTo(xPosition, xAxisY + 5);
+    ctx.stroke();
+
+    ctx.fillText(label, xPosition - 10, xAxisY + 20);
+    ctx.closePath();
+  });
+
+  let allYValues = [];
+  if (typeof evaluatedData[xLabels[0]] === "number") {
+    allYValues = Object.values(evaluatedData);
+  } else {
+    allYValues = Object.values(evaluatedData).flatMap((dataPoint) =>
+      Object.values(dataPoint)
+    );
+  }
+
+  const uniqueYValues = Array.from(new Set(allYValues)).sort((a, b) => a - b);
+  const yMin = Math.min(...uniqueYValues);
+  const yMax = Math.max(...uniqueYValues);
+
+  const yTickSpacing = (graphHeight - 50) / 5;
+
+  for (let i = 0; i <= 5; i++) {
+    const yPosition = graphHeight - i * yTickSpacing - 50 + yOffset;
+    ctx.beginPath();
+    ctx.moveTo(yAxisX - 5, yPosition);
+    ctx.lineTo(yAxisX, yPosition);
+    ctx.stroke();
+
+    const yLabel = Math.round(yMin + (yMax - yMin) * (i / 5));
+    ctx.fillText(yLabel, yAxisX - 40, yPosition + 5);
+    ctx.closePath();
+  }
+};
+
 // Draw Bar Chart
 const drawBarChart = (data, x, y) => {
+  const graphHeight = canvas.height - 120; // Height remains unchanged
+  const graphWidth = canvas.width - 70; // Width remains unchanged
   const xData = Object.keys(data).map(Number); // Get years as numbers
   const yData = Object.values(data); // Get corresponding values
 
-  const xNormalized = normalizeData(xData, canvas.width);
-
-  const barWidth = canvas.width / xData.length; // Calculate bar width for each year
-  const yOffset = 50; // Move graph up by 50 pixels for better positioning
-  const leftOffset = 0; // move to left
-
+  const xNormalized = normalizeData(xData, graphWidth); // Normalize xData based on graphWidth
+  const barWidth = graphWidth / (xData.length * 1.5); // Keep the barWidth the same
+  /////////////////////
+  const yOffset = 20;
+  const leftOffset = 20;
+  ///////////////////////
   // Collect all unique categories from the data to ensure consistent colors
   const uniqueCategories = new Set();
   yData.forEach((yearData) => {
@@ -229,33 +295,31 @@ const drawBarChart = (data, x, y) => {
   }, {});
 
   Object.entries(categoryColorMap).forEach(([label, color]) => {
-    drawLegend(label, color); // Call drawLegend for each label-color pair
+    drawBarLegend(label, color); // Call drawLegend for each label-color pair
   });
-
-  console.log(categoryColorMap);
 
   // Check if the year data is a number (simple data) or an object (complex data)
   if (typeof yData[0] === "number") {
-    drawAxes(xData, yData, data);
-    // Simple case: Draw a single bar
-    const yNormalized = normalizeData(yData, canvas.height - yOffset); // Normalize the height
+    drawBarAxes(xData, yData, data);
+    const yNormalized = normalizeData(yData, graphHeight); // Normalize the height
     drawLegend(y, "#e74c3c", 1);
     for (let i = 0; i < xData.length; i++) {
       ctx.beginPath();
       ctx.rect(
-        xNormalized[i] - leftOffset,
-        canvas.height - yNormalized[i] - yOffset, // Invert y-axis
-        barWidth - 10, // Adjust bar width
+        xNormalized[i] - leftOffset + barWidth / 4, // Adjusting for thinner spacing
+        graphHeight - yNormalized[i], // Correctly adjust the height for lower position
+        barWidth - 10, // Keep this as it is
         yNormalized[i]
       );
 
-      ctx.fillStyle = "#e74c3c";
+      ctx.fillStyle = "#e74c3c"; // Color of the bar
       ctx.fill();
       ctx.closePath();
     }
   } else if (typeof yData[0] === "object") {
     drawXAxes(xData, yData, data);
     // Complex case: Multiple categories
+
     yData.forEach((yearData, index) => {
       let accumulatedHeight = 0; // Reset for each year
       const totalHeight = Object.values(yearData).reduce(
@@ -265,11 +329,10 @@ const drawBarChart = (data, x, y) => {
 
       // Draw each category segment within the bar
       Object.entries(yearData).forEach(([category, value]) => {
-        const yNormalized =
-          (value / totalHeight) * (canvas.height - 50 - yOffset); // Normalize height based on total height
+        const yNormalized = (value / totalHeight) * (graphHeight - yOffset); // Normalize height based on total height
 
-        const barX = xNormalized[index] + 5 - leftOffset + index * 20; // X position of the segment
-        const barY = canvas.height - accumulatedHeight - yNormalized - yOffset; // Y position of the segment
+        const barX = xNormalized[index] - leftOffset + barWidth / 4; // Adjusted for thinner spacing
+        const barY = graphHeight - accumulatedHeight - yNormalized - yOffset; // Position of the segment
 
         ctx.beginPath();
         ctx.rect(
@@ -293,6 +356,9 @@ const drawBarChart = (data, x, y) => {
 
         accumulatedHeight += yNormalized; // Update accumulated height for stacking segments
       });
+    });
+    categoriesArray.forEach((label, index) => {
+      drawBarLegend(label, categoryColorMap[label], index); // Call drawBarLegend for each label-color pair
     });
   }
 };
@@ -320,7 +386,7 @@ const drawPieChart = (data, x, y) => {
 
   let xOffset = 0;
   const piesPerRow = Math.floor(canvas.width / (200 + 20)); // 200 is pie diameter, 20 is padding
-  const pieDiameter = 200; // Fixed diameter for each pie
+  const pieDiameter = 140; // Fixed diameter for each pie
   const pieRadius = pieDiameter / 2;
   const verticalOffset = 50;
 
@@ -344,16 +410,19 @@ const drawPieChart = (data, x, y) => {
       ctx.fillStyle = `hsl(${(index / yData.length) * 360}, 70%, 60%)`;
       ctx.fill();
 
-      const labelX = centerX + 170 * Math.cos(startAngle + sliceAngle / 2); // Position X
-      const labelY = centerY + 170 * Math.sin(startAngle + sliceAngle / 2); // Position Y
+      const labelX = centerX + 200 * Math.cos(startAngle + sliceAngle / 2); // Position X
+      const labelY = centerY + 200 * Math.sin(startAngle + sliceAngle / 2); // Position Y
 
       ctx.fillStyle = "black"; // Color of the label text
       ctx.fillText(value, labelX, labelY);
 
       startAngle = endAngle;
     });
-    drawLegend(y);
+    drawLegend(y, "black", 1);
   } else if (typeof yData[0] === "object") {
+    // canvas.width = 2000;
+    // canvas.height = 1500;
+    const legendIndexMap = {}; // Object to keep track of drawn legend items
     yData.forEach((yearData, yearIndex) => {
       const total = Object.values(yearData).reduce((acc, val) => acc + val, 0); // Calculate total for the year
       let startAngle = 0;
@@ -388,18 +457,48 @@ const drawPieChart = (data, x, y) => {
         ctx.fillText(value, labelX, labelY);
 
         startAngle = endAngle;
+
+        // Draw the legend for this category only if it hasn't been drawn yet
+        if (!legendIndexMap[category]) {
+          const legendIndex = Object.keys(legendIndexMap).length; // Get current count of unique categories
+          legendIndexMap[category] = true; // Mark this category as drawn
+          drawPieLegend(category, categoryColorMap[category], legendIndex); // Call drawPieLegend
+        }
       });
 
       xOffset += 2 * radius + 50; // Move to the right for the next pie chart
+
+      ctx.fillStyle = "black"; // Color of the year text
+      ctx.font = "bold 16px Arial"; // Set font style
+      ctx.fillText(
+        `${xData[yearIndex]}`,
+        centerX - 30,
+        centerY - pieRadius - 10
+      ); // Position the year label
     });
 
     const canvasParent = canvas.parentElement;
-    canvasParent.style.width = "800px";
-    canvasParent.style.overflowX = "auto";
+    canvasParent.style.width = "window.innerWidth";
+    canvasParent.style.overflow = "scroll";
   }
 };
 
+function drawPieLegend(label, color, index) {
+  const legendX = canvas.width - 350; // X position for the legend, adjust as needed
+  const legendY = index * 30; // Y position for the legend, spaced by 30 pixels for each item
+
+  // Draw the colored square for the legend item
+  ctx.fillStyle = color; // Set the color for the legend item
+  ctx.fillRect(legendX, legendY, 20, 20); // Draw a colored square for the legend
+
+  // Set the color for the label text and draw the label next to the square
+  ctx.fillStyle = "black"; // Set the color for the label text
+  ctx.fillText(label, legendX + 25, legendY + 15); // Draw the label next to the square
+}
+
 const drawXAxes = (xLabels, yLabels, evaluatedData) => {
+  const xData = Object.keys(evaluatedData).map(Number); // Get years as numbers
+  const graphWidth = canvas.width - 70; // Calculate usable graph width
   const xAxisY = canvas.height - 40; // Y position for x-axis
   const yAxisX = 50; // X position for y-axis
 
@@ -412,20 +511,22 @@ const drawXAxes = (xLabels, yLabels, evaluatedData) => {
   ctx.stroke(); // Actually draw the x-axis
   ctx.closePath();
 
-  // Draw y-axis
+  // Calculate bar width for alignment
+  const barWidth = graphWidth / (xData.length * 1.5); // Adjusted bar width
 
   // Draw x-axis ticks and labels
-  const xTickSpacing = (canvas.width - 50) / (xLabels.length - 1); // Spacing between x ticks
   xLabels.forEach((label, index) => {
-    const xPosition = yAxisX + index * xTickSpacing; // Calculate x position for each label
+    // Center the tick under the bar
+    const xPosition = yAxisX + index * (barWidth * 1.5) + barWidth / 2;
+
     ctx.beginPath();
     ctx.moveTo(xPosition, xAxisY); // Start tick line
     ctx.lineTo(xPosition, xAxisY + 5); // Draw tick line
     ctx.stroke(); // Draw the tick
-
-    ctx.fillText(label, xPosition - 10, xAxisY + 20); // Draw label
     ctx.closePath();
-  });
 
-  // Step 1: Collect all y-values from the evaluated data
+    // Draw label centered under the tick
+    const labelWidth = ctx.measureText(label).width; // Measure the width of the label
+    ctx.fillText(label, xPosition - labelWidth / 2, xAxisY + 20); // Center the label
+  });
 };

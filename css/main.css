@@ -34,6 +34,7 @@ main {
 
 footer {
   grid-area: f;
+  height: 50px;
 }
 
 .displayPreview {
@@ -49,6 +50,9 @@ footer {
 }
 .chart-container {
   display: flex;
+  height: 700px;
+  /* overflow: hidden; */
+  overflow: scroll;
 }
 .typeOfGraph {
   display: flex;
