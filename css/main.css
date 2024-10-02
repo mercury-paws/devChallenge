@@ -14,12 +14,13 @@ body {
 header {
   grid-area: h;
   text-align: center;
-  height: 100px;
+  height: 150px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   gap: 10px;
+  padding: 10px 0 10px 0;
 }
 .darkHeader {
   background-color: #003366;
@@ -60,6 +61,21 @@ footer {
   gap: 4px;
 }
 
+.orderList {
+  list-style-type: decimal;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  flex-wrap: wrap;
+  row-gap: 7px;
+  padding-left: 20px;
+  justify-content: center;
+  align-items: center;
+}
+.orderItem {
+  list-style-type: decimal;
+}
+
 #canvas {
   border: 1px solid #ccc;
 }
@@ -90,6 +106,9 @@ button {
 }
 .axis-selection-container {
   flex-direction: column;
+}
+.mainHeader {
+  margin: 15px auto;
 }
 
 @media screen and (min-width: 768px) {

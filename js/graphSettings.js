@@ -68,5 +68,5 @@ const axisSelection = (keys, graphType, sheetData) => {
   yAxisRadioList.forEach((radio) => {
     radio.addEventListener("change", () => drawGraph(graphType, sheetData));
   });
-  console.log("Calling drawGraph with:", graphType, sheetData);
+  // console.log("Calling drawGraph with:", graphType, sheetData);
 };

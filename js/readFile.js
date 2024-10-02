@@ -9,26 +9,44 @@ export const readFile = (file) => {
     const data = new Uint8Array(event.target.result);
     const workbook = XLSX.read(data, { type: "array" });
 
-    // Get the first sheet name and its contents
     const firstSheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[firstSheetName];
 
-    // Convert the sheet to JSON
     const sheetData = XLSX.utils.sheet_to_json(
       worksheet
       // , { header: 1 }
     );
 
-    // Data manipulation
-    console.log(sheetData);
+    if (!sheetData || sheetData.length === 0) {
+      alert("No data in file");
+      return;
+    }
+
     const keys = Object.keys(sheetData[0]);
-    console.log(keys);
+
+    if (!keys || keys.length === 0 || keys.some((key) => !key)) {
+      alert("Invalid keys in the file");
+      return;
+    }
+
+    for (const row of sheetData) {
+      for (const key of keys) {
+        const value = row[key];
+        if (value === undefined || value === null) {
+          alert(`Invalid value found for key "${key}"`);
+          return;
+        }
+      }
+    }
+
+    // Data manipulation
+    // console.log(sheetData);
+
+    // console.log(keys);
 
     selectGraph(keys, sheetData);
     displayPreview(sheetData);
   };
 
   reader.readAsArrayBuffer(file);
-
-  //
 };

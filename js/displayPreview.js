@@ -3,7 +3,6 @@ const canvas = document.getElementById("canvas");
 
 let updateData;
 export const displayPreview = (sheetData) => {
-  // canvas.classList.add("displayNone");
   previewSection.classList.add("displayPreview");
   previewSection.innerHTML = `
   <h3>File Preview:</h3>
@@ -30,8 +29,7 @@ export const displayPreview = (sheetData) => {
   });
   tableHead.appendChild(headerRow);
 
-  // Display the first 5 rows of data for preview (or more if needed)
-  updateData.slice(0, 10).forEach((row) => {
+  updateData.slice(0, 15).forEach((row) => {
     const tableRow = document.createElement("tr");
     Object.values(row).forEach((cellValue) => {
       const cell = document.createElement("td");
@@ -60,6 +58,5 @@ const updatePreviewSize = () => {
 updatePreviewSize();
 
 window.addEventListener("resize", () => {
-  updatePreviewSize(); // Update canvas size on resize
-  // displayPreview(updateData);
+  updatePreviewSize();
 });
