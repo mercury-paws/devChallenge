@@ -51,7 +51,7 @@ footer {
 }
 .chart-container {
   display: flex;
-  height: 700px;
+  /* height: 700px; */
   /* overflow: hidden; */
   overflow: scroll;
 }

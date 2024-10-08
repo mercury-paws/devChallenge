@@ -14,7 +14,7 @@ export const readCSV = (file) => {
       };
     });
 
-    selectGraph(Object.keys(sheetData[0]), sheetData); 
+    selectGraph(Object.keys(sheetData[0]), sheetData);
     displayPreview(sheetData);
   };
 
