@@ -29,16 +29,16 @@ export const evaluateData = (xAxisKey, yAxisKey, sheetData) => {
     // If xAxis is a string
     const result = {};
 
-    xData.forEach((region) => {
+    xData.forEach((element) => {
       const filteredData = sheetData.filter(
-        (item) => item[xAxisKey] === region
+        (item) => item[xAxisKey] === element
       );
 
       if (filteredData.length > 0) {
         const firstItem = filteredData[0];
 
         if (typeof firstItem[yAxisKey] === "string") {
-          result[region] = filteredData.reduce((acc, item) => {
+          result[element] = filteredData.reduce((acc, item) => {
             acc[item[yAxisKey]] = (acc[item[yAxisKey]] || 0) + 1;
             return acc;
           }, {});
@@ -48,9 +48,9 @@ export const evaluateData = (xAxisKey, yAxisKey, sheetData) => {
             const yearValues = filteredData
               .map((item) => item[yAxisKey])
               .sort((a, b) => a - b);
-            result[region] = yearValues;
+            result[element] = yearValues;
           } else {
-            result[region] = filteredData.reduce(
+            result[element] = filteredData.reduce(
               (sum, item) => sum + item[yAxisKey],
               0
             );
