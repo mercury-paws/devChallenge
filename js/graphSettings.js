@@ -59,7 +59,17 @@ const axisSelection = (keys, graphType, sheetData) => {
 
   const xAxisRadioList = document.querySelectorAll(`input[name=xAxis]`);
   const yAxisRadioList = document.querySelectorAll(`input[name=yAxis]`);
-  console.log(xAxisRadioList);
+
+  const disableYearRadiosInYGroup = () => {
+    yAxisRadioList.forEach((radio) => {
+      if (radio.value.toLowerCase().includes("year")) {
+        radio.disabled = true;
+      }
+    });
+  };
+
+  // Disable "year" radios initially
+  disableYearRadiosInYGroup();
 
   const disableMatchingRadio = (group, value, disable) => {
     group.forEach((radio) => {
@@ -69,6 +79,9 @@ const axisSelection = (keys, graphType, sheetData) => {
         radio.disabled = false; // Enable other radios
       }
     });
+    if (group === yAxisRadioList) {
+      disableYearRadiosInYGroup();
+    }
   };
 
   // Attach event listeners to Group 1 radios
@@ -83,9 +96,6 @@ const axisSelection = (keys, graphType, sheetData) => {
   });
 
   yAxisRadioList.forEach((radio) => {
-    if (radio.value.toLowerCase().includes("year")) {
-      radio.disabled = true;
-    }
     radio.addEventListener("change", (e) => {
       const selectedValue = e.target.value;
 
