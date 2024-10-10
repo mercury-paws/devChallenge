@@ -5,7 +5,6 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 export const appendGraphSettings = (keys, selectedGraph, sheetData) => {
-  // Remove event.preventDefault() as it's not necessary in this context
   graphSettings.textContent = "";
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 

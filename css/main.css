@@ -55,6 +55,31 @@ footer {
   /* overflow: hidden; */
   overflow: scroll;
 }
+.changeColorBtn {
+  width: 30px;
+  height: 30px;
+}
+.changeColorSection {
+  width: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 2px;
+  row-gap: 2px;
+}
+
+.changeColorList {
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  row-gap: 2px;
+}
 .typeOfGraph {
   display: flex;
   flex-direction: column;

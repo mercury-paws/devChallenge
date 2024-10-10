@@ -29,7 +29,7 @@ export const displayPreview = (sheetData) => {
   });
   tableHead.appendChild(headerRow);
 
-  updateData.slice(0, 15).forEach((row) => {
+  updateData.slice(0, 100).forEach((row) => {
     const tableRow = document.createElement("tr");
     Object.values(row).forEach((cellValue) => {
       const cell = document.createElement("td");

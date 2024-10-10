@@ -1,4 +1,5 @@
 import { evaluateData } from "./evaluateData.js";
+import { generateColors } from "./colorPalette.js";
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -40,7 +41,7 @@ export function drawGraph(graphType, data) {
   // Evaluate data based on selected axes
   const evaluatedData = evaluateData(x, y, dataUpdate);
 
-  // console.log("Evaluated Data:", evaluatedData);
+  console.log("Evaluated Data:", evaluatedData);
 
   // Draw the graph based on the evaluated data
   if (graphType === "lineGraph") {
@@ -126,14 +127,21 @@ const drawAxes = (xLabels, yLabels, evaluatedData) => {
 const drawLineGraph = (data, xVal, yVal) => {
   const graphHeight = canvas.height - 100;
   const graphWidth = canvas.width - 70;
-  const xData = Object.keys(data).map(Number);
+  ////////////////////////
+  // const xData = Object.keys(data).map(Number);
+  /////////////////////////
+  const xData = Object.keys(data);
+  const xDataLabels = xData.every((key) => !isNaN(Number(key)))
+    ? xData.map(Number)
+    : xData;
+
   const yData = Object.values(data);
 
-  drawAxes(xData, yData, data);
+  drawAxes(xDataLabels, yData, data);
 
   if (typeof yData[0] === "number") {
     const yNormalized = normalizeData(yData, graphHeight);
-    drawSingleLine(xData, yNormalized, "#3498db", yVal);
+    drawSingleLine(xDataLabels, yNormalized, "#3498db", yVal);
   } else if (typeof yData[0] === "object") {
     const subCategories = Object.keys(yData[0]);
     const colors = generateColors(subCategories.length);
@@ -142,7 +150,14 @@ const drawLineGraph = (data, xVal, yVal) => {
       const ySubData = yData.map((yearData) => yearData[subCat] || 0);
       const yNormalized = normalizeData(ySubData, graphHeight);
 
-      drawSingleLine(xData, yNormalized, colors[index], subCat, data, index);
+      drawSingleLine(
+        xDataLabels,
+        yNormalized,
+        colors[index],
+        subCat,
+        data,
+        index
+      );
     });
   }
 };
@@ -180,17 +195,8 @@ function drawLegend(label, color, index) {
   ctx.fillText(label, legendX + 25, legendY + 15);
 }
 
-// Generate a list of unique colors
-function generateColors(count) {
-  const colors = [];
-  for (let i = 0; i < count; i++) {
-    colors.push(`hsl(${(i * 360) / count}, 70%, 50%)`);
-  }
-  return colors;
-}
-
 function drawBarLegend(label, color, index) {
-  const legendX = canvas.width - 900 + index * 100;
+  const legendX = canvas.width - 900 + index * 150;
   const legendY = 600;
 
   ctx.fillStyle = color;
@@ -199,6 +205,7 @@ function drawBarLegend(label, color, index) {
   ctx.fillStyle = "black";
   ctx.fillText(label, legendX + 25, legendY + 15);
 }
+
 const drawBarAxes = (xLabels, yLabels, evaluatedData) => {
   const graphHeight = canvas.height - 120;
   const graphWidth = canvas.width - 70;
@@ -266,11 +273,19 @@ const drawBarAxes = (xLabels, yLabels, evaluatedData) => {
 const drawBarChart = (data, x, y) => {
   const graphHeight = canvas.height - 120;
   const graphWidth = canvas.width - 70;
-  const xData = Object.keys(data).map(Number);
+  ///////////////////////////////
+  // const xData = Object.keys(data).map(Number);
+  //////////////////////////////
+
+  const xData = Object.keys(data);
+  const xDataLabels = xData.every((key) => !isNaN(Number(key)))
+    ? xData.map(Number)
+    : xData;
+
   const yData = Object.values(data);
 
-  const xNormalized = normalizeData(xData, graphWidth);
-  const barWidth = graphWidth / (xData.length * 1.5);
+  const xNormalized = normalizeData(xDataLabels, graphWidth);
+  const barWidth = graphWidth / (xDataLabels.length * 1.5);
 
   const yOffset = 20;
   const leftOffset = 20;
@@ -296,11 +311,13 @@ const drawBarChart = (data, x, y) => {
     drawBarLegend(label, color);
   });
 
+  // Handle standard bar charts with single values
   if (typeof yData[0] === "number") {
-    drawBarAxes(xData, yData, data);
+    drawBarAxes(xDataLabels, yData, data);
     const yNormalized = normalizeData(yData, graphHeight);
     drawLegend(y, "#e74c3c", 1);
-    for (let i = 0; i < xData.length; i++) {
+
+    for (let i = 0; i < xDataLabels.length; i++) {
       ctx.beginPath();
       ctx.rect(
         xNormalized[i] - leftOffset + barWidth / 4,
@@ -313,8 +330,10 @@ const drawBarChart = (data, x, y) => {
       ctx.fill();
       ctx.closePath();
     }
-  } else if (typeof yData[0] === "object") {
-    drawXAxes(xData, yData, data);
+  }
+  // Handle stacked bar charts with nested objects (like categories per year)
+  else if (typeof yData[0] === "object") {
+    drawXAxes(xDataLabels, yData, data);
 
     yData.forEach((yearData, index) => {
       let accumulatedHeight = 0;
@@ -345,6 +364,55 @@ const drawBarChart = (data, x, y) => {
         accumulatedHeight += yNormalized;
       });
     });
+
+    categoriesArray.forEach((label, index) => {
+      drawBarLegend(label, categoryColorMap[label], index);
+    });
+  }
+
+  // NEW LOGIC: Handle deeply nested objects with multiple category layers
+  else if (
+    typeof yData[0] === "object" &&
+    typeof Object.values(yData[0])[0] === "object"
+  ) {
+    console.log("Handling nested categories...");
+
+    xDataLabels.forEach((key, index) => {
+      let accumulatedHeight = 0;
+
+      // Loop through each main group (e.g., "Consulate", "Embassy")
+      Object.entries(yData[index]).forEach(([mainGroup, subCategoryValues]) => {
+        const mainGroupHeight = Object.values(subCategoryValues).reduce(
+          (acc, val) => acc + val,
+          0
+        );
+
+        Object.entries(subCategoryValues).forEach(([subCategory, value]) => {
+          const yNormalized =
+            (value / mainGroupHeight) * (graphHeight - yOffset);
+
+          const barX = xNormalized[index] - leftOffset + barWidth / 4;
+          const barY = graphHeight - accumulatedHeight - yNormalized - yOffset;
+
+          ctx.beginPath();
+          ctx.rect(barX, barY, barWidth - 10, yNormalized);
+
+          ctx.fillStyle = categoryColorMap[subCategory] || "#000";
+          ctx.fill();
+          ctx.closePath();
+
+          const labelX = barX + (barWidth - 10) / 2 - 15;
+          const labelY = barY + 25;
+
+          ctx.fillStyle = "black";
+          ctx.fillText(value, labelX, labelY);
+
+          accumulatedHeight += yNormalized;
+        });
+      });
+    });
+
+    // Draw legends for sub-categories
     categoriesArray.forEach((label, index) => {
       drawBarLegend(label, categoryColorMap[label], index);
     });
@@ -479,23 +547,24 @@ function drawPieLegend(label, color, index) {
 
 const drawXAxes = (xLabels, yLabels, evaluatedData) => {
   const xData = Object.keys(evaluatedData).map(Number);
-  const graphWidth = canvas.width - 70;
+  const graphWidth = canvas.width - 80;
   const xAxisY = canvas.height - 40;
-  const yAxisX = 50;
+  const yAxisX = 25;
 
   // Draw x-axis
   ctx.beginPath();
-  ctx.moveTo(0, xAxisY);
-  ctx.lineTo(canvas.width, xAxisY);
+  ctx.moveTo(20, xAxisY);
+  ctx.lineTo(graphWidth + 20, xAxisY);
   ctx.strokeStyle = "#000";
   ctx.lineWidth = 2;
   ctx.stroke();
   ctx.closePath();
 
+  const xNormalized = normalizeData(xData, graphWidth); // Ensure same normalization method as bar chart
   const barWidth = graphWidth / (xData.length * 1.5);
 
   xLabels.forEach((label, index) => {
-    const xPosition = yAxisX + index * (barWidth * 1.5) + barWidth / 2;
+    const xPosition = xNormalized[index] + barWidth / 4;
 
     ctx.beginPath();
     ctx.moveTo(xPosition, xAxisY); // Start tick line
