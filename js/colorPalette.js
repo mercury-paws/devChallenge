@@ -88,21 +88,21 @@ export function generateColors(count, colorset) {
   return colors;
 }
 
-document.getElementById("scheme1").addEventListener("click", () => {
-  colorset = setPalette("scheme1");
-  const colors = generateColors(initialCount, colorset);
-  drawGraph(graphType, data, colors);
-});
+// document.getElementById("scheme1").addEventListener("click", () => {
+//   colorset = setPalette("scheme1");
+//   const colors = generateColors(initialCount, colorset);
+//   drawGraph(graphType, data, colors);
+// });
 
-document.getElementById("scheme2").addEventListener("click", () => {
-  colorset = setPalette("scheme2");
-  const colors = generateColors(initialCount, colorset);
-  drawGraph(graphType, data, colors);
-});
+// document.getElementById("scheme2").addEventListener("click", () => {
+//   colorset = setPalette("scheme2");
+//   const colors = generateColors(initialCount, colorset);
+//   drawGraph(graphType, data, colors);
+// });
 
-document.getElementById("scheme3").addEventListener("click", () => {
-  colorset = setPalette("scheme3");
-  const colors = generateColors(initialCount, colorset);
-  drawGraph(graphType, data, colors);
-});
-console.log(colorset);
+// document.getElementById("scheme3").addEventListener("click", () => {
+//   colorset = setPalette("scheme3");
+//   const colors = generateColors(initialCount, colorset);
+//   drawGraph(graphType, data, colors);
+// });
+// console.log(colorset);
