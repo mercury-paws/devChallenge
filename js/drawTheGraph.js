@@ -6,6 +6,7 @@ const ctx = canvas.getContext("2d");
 
 let graphTypeUpdate;
 let dataUpdate;
+let colorsUpdate;
 const canvasHeight = 700;
 const yOffset = 50;
 const updateCanvasSize = () => {
@@ -16,12 +17,13 @@ updateCanvasSize();
 
 window.addEventListener("resize", () => {
   updateCanvasSize();
-  drawGraph(graphTypeUpdate, dataUpdate);
+  drawGraph(graphTypeUpdate, dataUpdate, colorsUpdate);
 });
 
-export function drawGraph(graphType, data) {
+export function drawGraph(graphType, data, colors) {
   graphTypeUpdate = graphType;
   dataUpdate = data;
+  colorsUpdate = colors;
 
   console.log("Inside drawGraph, received data:", dataUpdate);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -45,11 +47,11 @@ export function drawGraph(graphType, data) {
 
   // Draw the graph based on the evaluated data
   if (graphType === "lineGraph") {
-    drawLineGraph(evaluatedData, x, y);
+    drawLineGraph(evaluatedData, x, y, colorsUpdate);
   } else if (graphType === "barChart") {
-    drawBarChart(evaluatedData, x, y);
+    drawBarChart(evaluatedData, x, y, colorsUpdate);
   } else if (graphType === "pieChart") {
-    drawPieChart(evaluatedData, x, y);
+    drawPieChart(evaluatedData, x, y, colorsUpdate);
   }
 }
 
@@ -124,7 +126,7 @@ const drawAxes = (xLabels, yLabels, evaluatedData) => {
   }
 };
 
-const drawLineGraph = (data, xVal, yVal) => {
+const drawLineGraph = (data, xVal, yVal, colorsUpdate) => {
   const graphHeight = canvas.height - 100;
   const graphWidth = canvas.width - 70;
   ////////////////////////
@@ -138,14 +140,14 @@ const drawLineGraph = (data, xVal, yVal) => {
   const yData = Object.values(data);
 
   drawAxes(xDataLabels, yData, data);
-
+  const colors = colorsUpdate;
   if (typeof yData[0] === "number") {
     const yNormalized = normalizeData(yData, graphHeight);
-    drawSingleLine(xDataLabels, yNormalized, "#3498db", yVal);
+    drawSingleLine(xDataLabels, yNormalized, colors[0], yVal);
   } else if (typeof yData[0] === "object") {
     const subCategories = Object.keys(yData[0]);
-    const colors = generateColors(subCategories.length);
-
+    // const colors = generateColors(subCategories.length, colorsUpdate);
+    // const colors = colorsUpdate;
     subCategories.forEach((subCat, index) => {
       const ySubData = yData.map((yearData) => yearData[subCat] || 0);
       const yNormalized = normalizeData(ySubData, graphHeight);
@@ -270,7 +272,7 @@ const drawBarAxes = (xLabels, yLabels, evaluatedData) => {
 };
 
 // Draw Bar Chart
-const drawBarChart = (data, x, y) => {
+const drawBarChart = (data, x, y, colorset) => {
   const graphHeight = canvas.height - 120;
   const graphWidth = canvas.width - 70;
   ///////////////////////////////
@@ -300,7 +302,7 @@ const drawBarChart = (data, x, y) => {
   });
 
   const categoriesArray = Array.from(uniqueCategories);
-  const colors = generateColors(categoriesArray.length);
+  const colors = colorset;
 
   const categoryColorMap = categoriesArray.reduce((map, category, index) => {
     map[category] = colors[index];
@@ -420,12 +422,12 @@ const drawBarChart = (data, x, y) => {
 };
 
 // Draw Pie Chart
-const drawPieChart = (data, x, y) => {
+const drawPieChart = (data, x, y, colorset) => {
   const xData = Object.keys(data).map(Number);
   const yData = Object.values(data);
   const categoriesArray = Object.keys(yData[0]);
 
-  const colors = generateColors(categoriesArray.length);
+  const colors = colorset;
 
   const categoryColorMap = categoriesArray.reduce((map, category, index) => {
     map[category] = colors[index];

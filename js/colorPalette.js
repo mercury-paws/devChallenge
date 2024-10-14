@@ -2,7 +2,7 @@ let colorset;
 let initialCount;
 import { drawGraph } from "./drawTheGraph.js";
 
-function setPalette(paletteName) {
+export function setPalette(paletteName) {
   if (paletteName === "scheme1") {
     return {
       colors: [
@@ -62,7 +62,7 @@ export function generateColors(count, colorset) {
   const colors = [];
   initialCount = count;
 
-  if (colorset === undefined || colorset.index === 0) {
+  if (colorset === undefined || colorset === null || colorset.index === 0) {
     for (let i = 0; i < initialCount; i++) {
       colors.push(`hsl(${(i * 360) / initialCount}, 70%, 50%)`);
     }
@@ -72,7 +72,7 @@ export function generateColors(count, colorset) {
       colors.push(colorset.colors[i]);
     }
 
-    console.log(1);
+    console.log("Palette 1 is defined");
   } else if (colorset.index === 2) {
     for (let i = 0; i < Math.min(count, colorset.colors.length); i++) {
       colors.push(colorset.colors[i]);
@@ -84,25 +84,6 @@ export function generateColors(count, colorset) {
     }
     console.log(3);
   }
-
+  console.log(colors);
   return colors;
 }
-
-// document.getElementById("scheme1").addEventListener("click", () => {
-//   colorset = setPalette("scheme1");
-//   const colors = generateColors(initialCount, colorset);
-//   drawGraph(graphType, data, colors);
-// });
-
-// document.getElementById("scheme2").addEventListener("click", () => {
-//   colorset = setPalette("scheme2");
-//   const colors = generateColors(initialCount, colorset);
-//   drawGraph(graphType, data, colors);
-// });
-
-// document.getElementById("scheme3").addEventListener("click", () => {
-//   colorset = setPalette("scheme3");
-//   const colors = generateColors(initialCount, colorset);
-//   drawGraph(graphType, data, colors);
-// });
-// console.log(colorset);

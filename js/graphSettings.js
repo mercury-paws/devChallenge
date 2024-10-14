@@ -1,4 +1,7 @@
 import { drawGraph } from "./drawTheGraph.js";
+import { setPalette, generateColors } from "./colorPalette.js";
+{
+}
 const isYear = (key) => /^\d{4}$/.test(key);
 const graphSettings = document.querySelector(".graphSettings");
 const canvas = document.getElementById("canvas");
@@ -67,7 +70,6 @@ const axisSelection = (keys, graphType, sheetData) => {
     });
   };
 
-  // Disable "year" radios initially
   disableYearRadiosInYGroup();
 
   const disableMatchingRadio = (group, value, disable) => {
@@ -90,7 +92,13 @@ const axisSelection = (keys, graphType, sheetData) => {
 
       // Disable the corresponding radio in Group 2
       disableMatchingRadio(yAxisRadioList, selectedValue, true);
-      drawGraph(graphType, sheetData);
+      let colorset = setPalette("");
+      const yData = Object.values(sheetData);
+      const count = Object.keys(yData[0]).length;
+      console.log("count:", count);
+      const colors = generateColors(count, colorset);
+      console.log("colors:", colors);
+      drawGraph(graphType, sheetData, colors);
     });
   });
 
@@ -100,9 +108,44 @@ const axisSelection = (keys, graphType, sheetData) => {
 
       // Disable the corresponding radio in Group 1
       disableMatchingRadio(xAxisRadioList, selectedValue, true);
-
-      drawGraph(graphType, sheetData);
+      let colorset = setPalette("");
+      const yData = Object.values(sheetData);
+      const count = Object.keys(yData[0]).length;
+      console.log("count:", count);
+      const colors = generateColors(count, colorset);
+      console.log("colors:", colors);
+      drawGraph(graphType, sheetData, colors);
     });
+  });
+
+  document.getElementById("scheme1").addEventListener("click", () => {
+    let colorset = setPalette("scheme1");
+    console.log("colorset.colors:", colorset.colors);
+    // const count = Object.keys(sheetData).length;
+    const yData = Object.values(sheetData);
+    const count = Object.keys(yData[0]).length;
+    console.log("count:", count);
+    const colors = generateColors(count, colorset);
+    console.log("colors:", colors);
+    drawGraph(graphType, sheetData, colors);
+  });
+
+  document.getElementById("scheme2").addEventListener("click", () => {
+    let colorset = setPalette("scheme2");
+    const yData = Object.values(sheetData);
+    const count = Object.keys(yData[0]).length;
+    console.log("count:", count);
+    const colors = generateColors(count, colorset);
+    drawGraph(graphType, sheetData, colors);
+  });
+
+  document.getElementById("scheme3").addEventListener("click", () => {
+    let colorset = setPalette("scheme3");
+    const yData = Object.values(sheetData);
+    const count = Object.keys(yData[0]).length;
+    console.log("count:", count);
+    const colors = generateColors(count, colorset);
+    drawGraph(graphType, sheetData, colors);
   });
 
   // xAxisRadioList.forEach((radio) => {
